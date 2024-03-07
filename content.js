@@ -56,6 +56,7 @@ const makeMapThumbnailClickable = () => {
   }
 };
 
+// Recreates the bidirectional arrow in the minimap
 const addNewDivAfterImage = () => {
   const imageElement = document.querySelector("#lu_map");
 
