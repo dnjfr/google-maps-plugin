@@ -97,6 +97,7 @@ const addNewDivAfterImage = () => {
     newImage.alt = "";
     newImage.style.height = "24px";
     newImage.style.width = "24px";
+    newImage.style.marginTop = "4px";
 
     newDiv.appendChild(newImage);
     container.appendChild(newDiv);
