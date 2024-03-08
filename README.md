@@ -1,7 +1,7 @@
 # Google Maps Icon and Minimap Reloaded
 
-The European Commission has decided through the Digital Markets Act to remove the Maps button from its search results
+The European Commission has decided, via the Digital Markets Act, to remove the Maps button from search results
 
-I decided to create a plugin to reimplement it, as well as on the minimap
+I decided to create a plugin to reimplement it, as well as make the minimap clickable again
 
 Feel free to improve it !
