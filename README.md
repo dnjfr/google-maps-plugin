@@ -1,4 +1,4 @@
-# Google Maps Icon and Minimap Reloaded
+# Google Maps Button and Minimap Reloaded
 
 The European Commission has decided, via the Digital Markets Act, to remove the Maps button from search results
 
