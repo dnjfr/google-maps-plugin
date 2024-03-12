@@ -42,7 +42,7 @@ const isSpanWithTextExist = (container, text) => {
 
 // Make minimap thumbnail clickable
 const makeMapThumbnailClickable = () => {
-  const mapThumbnailContainer = document.querySelector(".Ggdpnf");
+  const mapThumbnailContainer = document.querySelector(".Ggdpnf, .kno-mrg-m");
   if (mapThumbnailContainer && mapThumbnailContainer instanceof HTMLElement) {
     const query = document.querySelector('input[name="q"]').value;
     if (query) {
