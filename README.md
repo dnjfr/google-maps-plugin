@@ -8,7 +8,9 @@ Feel free to improve it !
 
 
 ———————————————————————————
+
 History:
+
 • 1.0.3
 Added an additional selector for the minimap
 • 1.0.2
