@@ -1,5 +1,7 @@
 // Create "Maps" button
 const createMapsLink = (query) => {
+  const containerBtn = document.createElement("div");
+  containerBtn.className = "YmvwI";
   const mapsLink = document.createElement("a");
   mapsLink.href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
     query
@@ -7,7 +9,7 @@ const createMapsLink = (query) => {
   mapsLink.className = "LatpMc nPDzT T3FoJb";
 
   const linkText = document.createElement("div");
-  linkText.className = "GKS7s";
+  // linkText.className = "GKS7s"; // To converse in comments, allows you to round the button
   linkText.setAttribute("jsname", "bVqjv");
 
   const spanText = document.createElement("span");
@@ -17,13 +19,14 @@ const createMapsLink = (query) => {
 
   linkText.appendChild(spanText);
   mapsLink.appendChild(linkText);
+  containerBtn.appendChild(mapsLink);
 
-  return mapsLink;
+  return containerBtn;
 };
 
 // Add "Maps" button to search tabs
 const addMapsButtonIfNotPresent = () => {
-  const searchTabs = document.querySelector(".IUOThf");
+  const searchTabs = document.querySelector(".IUOThf, .CA0QAA, .crJ18e");
   if (searchTabs && !isSpanWithTextExist(searchTabs, "Maps")) {
     const searchQuery = document.querySelector('input[name="q"]').value;
     if (searchQuery) {
@@ -42,7 +45,9 @@ const isSpanWithTextExist = (container, text) => {
 
 // Make minimap thumbnail clickable
 const makeMapThumbnailClickable = () => {
-  const mapThumbnailContainer = document.querySelector(".Ggdpnf, .kno-mrg-m");
+  const mapThumbnailContainer = document.querySelector(
+    ".Ggdpnf, .kno-mrg-m, .lu_map_section"
+  );
   if (mapThumbnailContainer && mapThumbnailContainer instanceof HTMLElement) {
     const query = document.querySelector('input[name="q"]').value;
     if (query) {
@@ -98,6 +103,7 @@ const addNewDivAfterImage = () => {
     newImage.style.height = "24px";
     newImage.style.width = "24px";
     newImage.style.marginTop = "4px";
+    newImage.style.marginLeft = "4px";
 
     newDiv.appendChild(newImage);
     container.appendChild(newDiv);

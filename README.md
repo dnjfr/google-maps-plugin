@@ -11,6 +11,10 @@ Feel free to improve it !
 
 History:
 
+• 1.0.4
+
+Added some classes, the design of the page being different (I don't know when the interface changes occur)
+
 • 1.0.3
 
 Added an additional selector for the minimap
