@@ -13,7 +13,7 @@ History:
 
 • 1.0.4
 
-Added some classes, the design of the page being different (I don't know when the interface changes occur)
+Added some classes, the design of the Google page has changed (I don't know when the interface changes occur)
 
 • 1.0.3
 
