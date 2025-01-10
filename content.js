@@ -1,21 +1,77 @@
-// Create "Maps" button
-const createMapsLink = (query) => {
-  const containerBtn = document.createElement("div");
-  containerBtn.className = "YmvwI";
-  const mapsLink = document.createElement("a");
-  mapsLink.href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+// Constants
+const SELECTORS = {
+  SEARCH_TABS: '.IUOThf, .CA0QAA, .crJ18e',
+  SEARCH_INPUT: 'input[name="q"]',
+  MAP_THUMBNAIL: ".ZqGZZ, .xP81Pd, .Ggdpnf, .kno-mrg-m, .lu_map_section",
+  MAP_IMAGE: "#lu_map, a[style*='height:80px']"
+};
+
+const CLASSES = {
+  SPAN_TEXT: "FMKtTb UqcIvb"
+};
+
+
+
+// Utility functions
+const createElementWithAttributes = (tag, attributes = {}) => {
+  const element = document.createElement(tag);
+  
+  Object.entries(attributes).forEach(([key, value]) => {
+    switch(key) {
+      case 'className':
+        element.className = value;
+        break;
+      case 'textContent':
+        element.textContent = value;
+        break;
+      case 'style':
+        Object.assign(element.style, value);
+        break;
+      default:
+        element.setAttribute(key, value);
+    }
+  });
+  
+  return element;
+};
+
+// Get URL
+const getUrl = (query) => {
+  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
     query
   )}`;
-  mapsLink.className = "LatpMc nPDzT T3FoJb";
+}
 
-  const linkText = document.createElement("div");
-  // linkText.className = "GKS7s"; // To converse in comments, allows you to round the button
-  linkText.setAttribute("jsname", "bVqjv");
+// Get search query
+const getSearchQuery = () => {
+  const searchInput = document.querySelector(SELECTORS.SEARCH_INPUT);
+  return searchInput instanceof HTMLInputElement ? searchInput.value : '';
+};
 
-  const spanText = document.createElement("span");
-  spanText.className = "FMKtTb UqcIvb";
-  spanText.setAttribute("jsname", "pIvPIe");
-  spanText.textContent = "Maps";
+
+
+// Component creation functions
+
+// Create "Maps" button
+const createMapsLink = (query) => {
+  const containerBtn = createElementWithAttributes('div', {
+    className: CLASSES.CONTAINER
+});
+
+  const mapsLink = createElementWithAttributes('a', {
+    className: CLASSES.LINK,
+    href: getUrl(query)
+  });
+
+  const linkText = createElementWithAttributes('div', {
+    jsname: 'bVqjv'
+  });
+
+  const spanText = createElementWithAttributes('span', {
+    className: CLASSES.SPAN_TEXT,
+    jsname: 'pIvPIe',
+    textContent: 'Maps'
+  });
 
   linkText.appendChild(spanText);
   mapsLink.appendChild(linkText);
@@ -26,9 +82,13 @@ const createMapsLink = (query) => {
 
 // Add "Maps" button to search tabs
 const addMapsButtonIfNotPresent = () => {
-  const searchTabs = document.querySelector(".IUOThf, .CA0QAA, .crJ18e");
-  if (searchTabs && !isSpanWithTextExist(searchTabs, "Maps")) {
-    const searchQuery = document.querySelector('input[name="q"]').value;
+  const searchTabs = document.querySelector(SELECTORS.SEARCH_TABS);
+  // Verify if "Maps" button already exists
+  const hasMapButton = Array.from(searchTabs?.querySelectorAll('span') || [])
+    .some(span => span.textContent === 'Maps');
+
+  if (searchTabs && !hasMapButton) {
+    const searchQuery = getSearchQuery();
     if (searchQuery) {
       const mapsLink = createMapsLink(searchQuery);
       searchTabs.appendChild(mapsLink);
@@ -36,80 +96,25 @@ const addMapsButtonIfNotPresent = () => {
   }
 };
 
-// Verify if "Maps" button already exists
-const isSpanWithTextExist = (container, text) => {
-  return Array.from(container.querySelectorAll("span")).some(
-    (span) => span.textContent === text
-  );
-};
-
 // Make minimap thumbnail clickable
 const makeMapThumbnailClickable = () => {
-  const mapThumbnailContainer = document.querySelector(
-    ".Ggdpnf, .kno-mrg-m, .lu_map_section"
-  );
-  if (mapThumbnailContainer && mapThumbnailContainer instanceof HTMLElement) {
-    const query = document.querySelector('input[name="q"]').value;
-    if (query) {
-      mapThumbnailContainer.addEventListener("click", () => {
-        window.location.href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-          query
-        )}`;
+  const combinedSelectors = `${SELECTORS.MAP_THUMBNAIL}, ${SELECTORS.MAP_IMAGE}`;
+  const mapThumbnailContainer = document.querySelectorAll(combinedSelectors);
+  if (!mapThumbnailContainer || mapThumbnailContainer.length === 0) return;
+
+  const query = getSearchQuery();
+  if (!query) return;
+
+  mapThumbnailContainer.forEach(thumbnail => {
+    console.log(mapThumbnailContainer);
+    if (thumbnail instanceof HTMLElement) {
+      thumbnail.addEventListener('click', () => {
+        window.location.href = getUrl(query);
       });
-      mapThumbnailContainer.style.cursor = "pointer";
+      thumbnail.style.cursor = 'pointer';
     }
-  }
-};
-
-// Recreates the bidirectional arrow in the minimap
-const addNewDivAfterImage = () => {
-  const imageElement = document.querySelector("#lu_map");
-
-  if (imageElement) {
-    const container = document.createElement("div");
-    container.style.position = "relative";
-
-    // Move the image to the container
-    imageElement.parentNode.insertBefore(container, imageElement);
-    container.appendChild(imageElement);
-    const newDiv = document.createElement("div");
-    newDiv.setAttribute("jscontroller", "hnlzI");
-    newDiv.className = "sEtYzd duf-h TUOsUe BSRXQc sxd9Pc";
-    newDiv.setAttribute("jsaction", "KQB0gd;rcuQ6b:npT2md");
-    newDiv.setAttribute(
-      "data-ved",
-      "2ahUKEwjy8uzlr-KEAxXeKFkFHZAaAv8QkNEBegQIFxAJ"
-    );
-    newDiv.style.boxShadow = "0px 1px 2px rgba(0,0,0,0.2)";
-    newDiv.style.backgroundColor = "rgba(255,255,255,0.87)";
-    newDiv.style.height = "32px";
-    newDiv.style.width = "32px";
-    newDiv.style.display = "block";
-    newDiv.style.outline = "0";
-    newDiv.style.position = "absolute";
-    newDiv.style.marginTop = "4px";
-    newDiv.style.marginRight = "4px";
-    newDiv.style.top = "0";
-    newDiv.style.right = "0";
-    newDiv.style.verticalAlign = "middle";
-    newDiv.style.zIndex = "1000";
-
-    // Image creation into the missing div
-    const newImage = document.createElement("img");
-    newImage.className = "kf0xcf oYQBg FIfWIe Tbiej u60jwe";
-    newImage.src =
-      "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEgAAABICAYAAABV7bNHAAAAmElEQVR4Ae3a1xHDIBQAQfpvglLxr+M5572Z18AqC4YkSZIkSdF60DwzQIAAaQK6HWfBAXQVzmwgOKOA4AQQnAaC00BwGghOA8FpIDgNBKeB4ADaw9GEc74JR5Kkr39sy4ufT4e1N7fjAPo/nAaC00BwGghOA8FpIDgNBKeB4DQQnAKC00BwdoPTwfnlDd2AAAGSJEmSJGkDhfC3AD4fHSUAAAAASUVORK5CYII=";
-    newImage.alt = "";
-    newImage.style.height = "24px";
-    newImage.style.width = "24px";
-    newImage.style.marginTop = "4px";
-    newImage.style.marginLeft = "4px";
-
-    newDiv.appendChild(newImage);
-    container.appendChild(newDiv);
-  }
+  });
 };
 
 addMapsButtonIfNotPresent();
 makeMapThumbnailClickable();
-addNewDivAfterImage();

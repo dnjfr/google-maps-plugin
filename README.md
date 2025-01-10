@@ -1,4 +1,4 @@
-# Google Maps Button and Minimap Reloaded
+# Google Maps Button and Minimap Reloaded for Chrome
 
 The European Commission has decided, via the Digital Markets Act, to remove the Maps button from search results
 
@@ -10,6 +10,10 @@ Feel free to improve it !
 ———————————————————————————
 
 History:
+
+• 1.1.0
+
+Refactored code for better maintainability, repaired the minimap click, removed the bidirectionnal arrow
 
 • 1.0.4
 
