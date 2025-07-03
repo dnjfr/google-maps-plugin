@@ -11,7 +11,7 @@ Feel free to improve it !
 
 History:
 
-• 1.1.0
+• 1.1.1
 
 Icons replacement
 
