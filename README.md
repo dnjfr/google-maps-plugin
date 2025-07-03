@@ -13,6 +13,11 @@ History:
 
 • 1.1.0
 
+Icons replacement
+
+
+• 1.1.0
+
 Refactored code for better maintainability, repaired the minimap click, removed the bidirectionnal arrow
 
 • 1.0.4
