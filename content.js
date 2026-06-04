@@ -1,120 +1,130 @@
-// Constants
-const SELECTORS = {
-  SEARCH_TABS: '.IUOThf, .CA0QAA, .crJ18e',
-  SEARCH_INPUT: 'input[name="q"]',
-  MAP_THUMBNAIL: ".ZqGZZ, .xP81Pd, .Ggdpnf, .kno-mrg-m, .lu_map_section",
-  MAP_IMAGE: "#lu_map, a[style*='height:80px']"
-};
-
-const CLASSES = {
-  SPAN_TEXT: "FMKtTb UqcIvb"
-};
+/**
+ * @param {string} query - User search query
+ * @returns {string} Google Maps URL for the given query
+ */
+const getMapsUrl = (query) =>
+  `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
 
 
+/** Semantic element finders */
+const find = {
+    /**
+     * Finds the search tabs bar via [role="navigation"] and known tab keywords.
+     * @returns {Element | null}
+     */
+    searchTabs() {
+        for (const nav of document.querySelectorAll('[role="navigation"]')) {
+            if (['Images', 'Vidéos', 'Videos', 'Shopping'].some(tab => nav.textContent.includes(tab))) {
+                return nav;
+            }
+        }
+        return null;
+    },
 
-// Utility functions
-const createElementWithAttributes = (tag, attributes = {}) => {
-  const element = document.createElement(tag);
-  
-  Object.entries(attributes).forEach(([key, value]) => {
-    switch(key) {
-      case 'className':
-        element.className = value;
-        break;
-      case 'textContent':
-        element.textContent = value;
-        break;
-      case 'style':
-        Object.assign(element.style, value);
-        break;
-      default:
-        element.setAttribute(key, value);
+    /**
+     * Reads the current search query from Google's input field.
+     * @returns {string}
+     */
+    searchQuery() {
+        const input = document.querySelector('textarea[name="q"], input[name="q"]');
+        return input?.value || '';
+    },
+
+    /**
+     * Finds Google Maps thumbnails by detecting map image URLs or map links containing images.
+     * @returns {Element[]}
+     */
+    mapThumbnails() {
+        const isMapSrc = (src) =>
+            (src.includes('google') && src.includes('/maps/')) || /maps\.(google|googleapis)/.test(src);
+
+        const byImage = [...document.querySelectorAll('img')]
+            .filter(img => isMapSrc(img.src || img.dataset?.src || ''))
+            .map(img => img.closest('a') || img.closest('[data-attrid]') || img.parentElement)
+            .filter(Boolean);
+
+        if (byImage.length) return byImage;
+
+        const byLink = [...document.querySelectorAll('a[href*="google.com/maps"]')]
+            .filter(a => a.querySelector('img'));
+
+        return byLink;
     }
-  });
-  
-  return element;
 };
 
-// Get URL
-const getUrl = (query) => {
-  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-    query
-  )}`;
-}
-
-// Get search query
-const getSearchQuery = () => {
-  const searchInput = document.querySelector(SELECTORS.SEARCH_INPUT);
-  return searchInput instanceof HTMLInputElement ? searchInput.value : '';
-};
-
-
-
-// Component creation functions
-
-// Create "Maps" button
-const createMapsLink = (query) => {
-  const containerBtn = createElementWithAttributes('div', {
-    className: CLASSES.CONTAINER
-});
-
-  const mapsLink = createElementWithAttributes('a', {
-    className: CLASSES.LINK,
-    href: getUrl(query)
-  });
-
-  const linkText = createElementWithAttributes('div', {
-    jsname: 'bVqjv'
-  });
-
-  const spanText = createElementWithAttributes('span', {
-    className: CLASSES.SPAN_TEXT,
-    jsname: 'pIvPIe',
-    textContent: 'Maps'
-  });
-
-  linkText.appendChild(spanText);
-  mapsLink.appendChild(linkText);
-  containerBtn.appendChild(mapsLink);
-
-  return containerBtn;
-};
-
-// Add "Maps" button to search tabs
+/**
+ * Injects a "Maps" tab into the Google search tabs bar if not already present.
+ * Clones an inactive tab to inherit current styling and inserts before the "More" overflow button.
+ */
 const addMapsButtonIfNotPresent = () => {
-  const searchTabs = document.querySelector(SELECTORS.SEARCH_TABS);
-  // Verify if "Maps" button already exists
-  const hasMapButton = Array.from(searchTabs?.querySelectorAll('span') || [])
-    .some(span => span.textContent === 'Maps');
 
-  if (searchTabs && !hasMapButton) {
-    const searchQuery = getSearchQuery();
-    if (searchQuery) {
-      const mapsLink = createMapsLink(searchQuery);
-      searchTabs.appendChild(mapsLink);
+    const tabs = find.searchTabs();
+    if (!tabs) return;
+
+    if ([...tabs.querySelectorAll('a')].some(a => a.textContent.trim() === 'Maps')) return;
+
+    const query = find.searchQuery();
+    if (!query) return;
+
+    // Clone the 2nd tab (inactive) to avoid the active tab's underline
+    const allLinks = [...tabs.querySelectorAll('a')];
+    const inactiveLink = allLinks[1] || allLinks[0];
+    if (!inactiveLink) return;
+
+    const templateItem = inactiveLink.closest('[role="listitem"]') || inactiveLink.parentElement;
+    const clone = templateItem.cloneNode(true);
+    const link = clone.querySelector('a') || clone;
+
+    link.href = getMapsUrl(query);
+    const span = clone.querySelector('span');
+    if (span) span.style.borderColor = 'transparent';
+
+    const textEl = span || link;
+    textEl.textContent = 'Maps';
+
+    // Insert before the "Plus/More" overflow button so Maps stays visible
+    const moreButton = tabs.querySelector('[role="button"][aria-expanded]');
+    if (moreButton) {
+        const moreItem = moreButton.closest('[role="listitem"]') || moreButton.parentElement;
+        moreItem.before(clone);
+    } else {
+        templateItem.parentElement.appendChild(clone);
     }
-  }
 };
 
-// Make minimap thumbnail clickable
+/**
+ * Makes Google Maps thumbnails in search results clickable.
+ * Redirects to Google Maps on click. Already-processed elements are marked via data-maps-clickable.
+ */
 const makeMapThumbnailClickable = () => {
-  const combinedSelectors = `${SELECTORS.MAP_THUMBNAIL}, ${SELECTORS.MAP_IMAGE}`;
-  const mapThumbnailContainer = document.querySelectorAll(combinedSelectors);
-  if (!mapThumbnailContainer || mapThumbnailContainer.length === 0) return;
+    const query = find.searchQuery();
+    if (!query) return;
 
-  const query = getSearchQuery();
-  if (!query) return;
+    const mapsUrl = getMapsUrl(query);
 
-  mapThumbnailContainer.forEach(thumbnail => {
-    console.log(mapThumbnailContainer);
-    if (thumbnail instanceof HTMLElement) {
-      thumbnail.addEventListener('click', () => {
-        window.location.href = getUrl(query);
-      });
-      thumbnail.style.cursor = 'pointer';
+    for (const thumbnail of find.mapThumbnails()) {
+        if (!(thumbnail instanceof HTMLElement) || thumbnail.dataset.mapsClickable) continue;
+
+        thumbnail.dataset.mapsClickable = 'true';
+        thumbnail.style.cursor = 'pointer';
+        thumbnail.addEventListener('click', () => {
+            window.location.href = mapsUrl;
+        });
     }
-  });
 };
 
+// Initial run
 addMapsButtonIfNotPresent();
 makeMapThumbnailClickable();
+
+// Re-run on dynamic content changes (Google loads content progressively)
+/** @type {ReturnType<typeof setTimeout> | undefined} */
+let pending;
+
+new MutationObserver(() => {
+    clearTimeout(pending);
+    pending = setTimeout(() => {
+        addMapsButtonIfNotPresent();
+        makeMapThumbnailClickable();
+    }, 200);
+}).observe(document.body, { childList: true, subtree: true });

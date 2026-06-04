@@ -9,33 +9,28 @@ Feel free to improve it !
 
 ———————————————————————————
 
-History:
+Changelog:
+
+• 2.0.0
+Full code refactor
 
 • 1.1.1
-
 Icons replacement
 
-
 • 1.1.0
-
 Refactored code for better maintainability, repaired the minimap click, removed the bidirectionnal arrow
 
 • 1.0.4
-
 Added some classes, the design of the Google page has changed (I don't know when the interface changes occur)
 
 • 1.0.3
-
 Added an additional selector for the minimap
 
 • 1.0.2
-
 Fixed the margin of bidirectional arrow
 
 • 1.0.1
-
 Added the bidirectional arrow on the minimap
 
 • 1.0.0
-
 Initial release
