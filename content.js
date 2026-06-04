@@ -14,6 +14,7 @@ const find = {
      */
     searchTabs() {
         for (const nav of document.querySelectorAll('[role="navigation"]')) {
+            
             if (['Images', 'Vidéos', 'Videos', 'Shopping'].some(tab => nav.textContent.includes(tab))) {
                 return nav;
             }
@@ -84,10 +85,13 @@ const addMapsButtonIfNotPresent = () => {
 
     // Insert before the "Plus/More" overflow button so Maps stays visible
     const moreButton = tabs.querySelector('[role="button"][aria-expanded]');
+    
     if (moreButton) {
         const moreItem = moreButton.closest('[role="listitem"]') || moreButton.parentElement;
         moreItem.before(clone);
-    } else {
+    } 
+    
+    else {
         templateItem.parentElement.appendChild(clone);
     }
 };
